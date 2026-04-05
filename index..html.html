@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurante Modelo - Excelência em Gastronomia</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-primary: #0f0f0f;
+            --bg-secondary: #1a1a1a;
+            --bg-card: #252525;
+            --text-primary: #f8f8f8;
+            --text-secondary: #d4d4d4;
+            --accent-terracota: #e67e22;
+            --accent-gold: #f4d03f;
+            --accent-basil: #27ae60;
+            --shadow: 0 20px 40px rgba(0,0,0,0.3);
+            --shadow-hover: 0 30px 60px rgba(230, 126, 34, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Crimson Text', serif;
+            font-weight: 700;
+        }
+
+        /* Navigation */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(15, 15, 15, 0.95);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            padding: 1rem 0;
+            transition: all 0.3s ease;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-family: 'Crimson Text', serif;
+            background: linear-gradient(135deg, var(--accent-gold), var(--accent-terracota));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background: var(--accent-gold);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 4px;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background: var(--accent-gold);
+            transition: 0.3s;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
+                        url('https://images.unsplash.com/photo-1513104890138-7c749659a591?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80') center/cover;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 2rem;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 5vw, 4.5rem);
+            margin-bottom: 1.5rem;
+            opacity: 0;
+            animation: fadeInUp 1s ease forwards;
+        }
+
+        .hero p {
+            font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+            margin-bottom: 2.5rem;
+            max-width: 600px;
+            opacity: 0;
+            animation: fadeInUp 1s ease 0.3s forwards;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--accent-terracota), var(--accent-gold));
+            color: white;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow);
+            opacity: 0;
+            animation: fadeInUp 1s ease 0.6s forwards;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        /* Sections */
+        .section {
+            padding: 8rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: clamp(2rem, 4vw, 3rem);
+            margin-bottom: 4rem;
+            background: linear-gradient(135deg, var(--accent-gold), var(--accent-terracota));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+
+        .section.visible .section-title {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* About Section */
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .about-text {
+            opacity: 0;
+            transform: translateX(-50px);
+            transition: all 0.8s ease;
+        }
+
+        .section.visible .about-text {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .about-image {
+            opacity: 0;
+            transform: translateX(50px);
+            transition: all 0.8s ease;
+        }
+
+        .section.visible .about-image {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .about-image img {
+            width: 100%;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        /* Menu Section */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .pizza-card {
+            background: var(--bg-card);
+            padding: 2rem;
+            border-radius: 20px;
+            text-align: center;
+            transition: all 0.4s ease;
+            opacity: 0;
+            transform: translateY(50px);
+        }
+
+        .pizza-card:nth-child(1) { transition-delay: 0.1s; }
+        .pizza-card:nth-child(2) { transition-delay: 0.2s; }
+        .pizza-card:nth-child(3) { transition-delay: 0.3s; }
+        .pizza-card:nth-child(4) { transition-delay: 0.4s; }
+
+        .section.visible .pizza-card {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .pizza-card:hover {
+            transform: translateY(-15px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .pizza-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 15px;
+            margin-bottom: 1.5rem;
+        }
+
+        .favorite-tag {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: var(--accent-basil);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .pizza-price {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-gold);
+            margin: 1rem 0;
+        }
+
+        /* Location Section */
+        .location-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            margin-top: 3rem;
+        }
+
+        .location-info h3 {
+            color: var(--accent-terracota);
+            margin-bottom: 1rem;
+        }
+
+        .location-hours {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .hours-item {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .map-container {
+            height: 300px;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        /* WhatsApp Button */
+        .whatsapp-float {
+            position: fixed;
+            width: 60px;
+            height: 60px;
+            bottom: 40px;
+            right: 40px;
+            background: #25D366;
+            color: #FFF;
+            border-radius: 50px;
+            text-align: center;
+            font-size: 30px;
+            box-shadow: 0px 2px 10px rgba(0,0,0,0.3);
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+
+        .whatsapp-float:hover {
+            transform: scale(1.1);
+            box-shadow: 0px 4px 20px rgba(37, 211, 102, 0.5);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--bg-secondary);
+            padding: 3rem 2rem 1rem;
+            text-align: center;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .social-links a {
+            color: var(--text-secondary);
+            font-size: 1.5rem;
+            transition: color 0.3s ease;
+        }
+
+        .social-links a:hover {
+            color: var(--accent-gold);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .hamburger {
+                display: flex;
+            }
+
+            .nav-links {
+                position: fixed;
+                left: -100%;
+                top: 70px;
+                flex-direction: column;
+                background-color: var(--bg-primary);
+                width: 100%;
+                text-align: center;
+                transition: 0.3s;
+                padding: 2rem 0;
+            }
+
+            .nav-links.active {
+                left: 0;
+            }
+
+            .about-content,
+            .location-container {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .section {
+                padding: 4rem 1rem;
+            }
+
+            .menu-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Scroll Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        const dishes = [
+            {
+                id: 1,
+                name: "Prato Principal",
+                price: "R$ 49,90",
+                image: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                ingredients: "Carne selecionada, acompanhamentos frescos e molho especial",
+                favorite: true
+            },
+            {
+                id: 2,
+                name: "Prato Vegetariano",
+                price: "R$ 39,90",
+                image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                ingredients: "Vegetais grelhados, queijo e ervas aromáticas",
+                favorite: false
+            },
+            {
+                id: 3,
+                name: "Prato do Chef",
+                price: "R$ 59,90",
+                image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                ingredients: "Combinação especial de ingredientes premium",
+                favorite: true
+            },
+            {
+                id: 4,
+                name: "Sobremesa Especial",
+                price: "R$ 24,90",
+                image: "https://images.unsplash.com/photo-1551024506-0bccd828d307?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                ingredients: "Chocolate, frutas frescas e toque de criatividade",
+                favorite: false
+            }
+        ];
+
+        const App = () => {
+            const [isMenuOpen, setIsMenuOpen] = useState(false);
+            const [visibleSections, setVisibleSections] = useState({});
+
+            const observer = useRef();
+
+            useEffect(() => {
+                observer.current = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            setVisibleSections(prev => ({
+                                ...prev,
+                                [entry.target.id]: true
+                            }));
+                        }
+                    });
+                }, { threshold: 0.1 });
+
+                document.querySelectorAll('.section').forEach(section => {
+                    observer.current.observe(section);
+                });
+
+                return () => observer.current.disconnect();
+            }, []);
+
+            const scrollToSection = (sectionId) => {
+                document.getElementById(sectionId).scrollIntoView({ 
+                    behavior: 'smooth' 
+                });
+                setIsMenuOpen(false);
+            };
+
+            return (
+                <>
+                    <nav className="navbar">
+                        <div className="nav-container">
+                            <div className="logo" onClick={() => scrollToSection('hero')}>Meu Restaurante</div>
+                            <ul className={`nav-links ${isMenuOpen ? 'active' : ''}`}>
+                                <li><a href="#hero" onClick={() => scrollToSection('hero')}>Início</a></li>
+                                <li><a href="#about" onClick={() => scrollToSection('about')}>Sobre</a></li>
+                                <li><a href="#menu" onClick={() => scrollToSection('menu')}>Menu</a></li>
+                                <li><a href="#location" onClick={() => scrollToSection('location')}>Local</a></li>
+                            </ul>
+                            <div className="hamburger" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </div>
+                        </div>
+                    </nav>
+
+                    <section id="hero" className="hero">
+                        <h1>Bem-vindo ao Meu Restaurante</h1>
+                        <p>Oferecemos pratos deliciosos feitos com ingredientes frescos e selecionados.</p>
+                        <a href="https://wa.me/5511999999999?text=Olá!%20Quero%20fazer%20uma%20reserva%20no%20Meu%20Restaurante!" 
+                           className="cta-button" target="_blank">
+                            <i className="fab fa-whatsapp"></i> Faça uma Reserva
+                        </a>
+                    </section>
+
+                    <section id="about" className={`section ${visibleSections.about ? 'visible' : ''}`}>
+                        <h2 className="section-title">Nossa História</h2>
+                        <div className="about-content">
+                            <div className="about-text">
+                                <p style={{fontSize: '1.1rem', lineHeight: '1.8'}}>
+                                    No Meu Restaurante, combinamos tradição culinária com técnicas modernas. 
+                                    Nossos pratos são preparados com <strong>ingredientes frescos e de alta qualidade</strong>, 
+                                    garantindo uma experiência gastronômica única.
+                                </p>
+                                <p style={{fontSize: '1.1rem', lineHeight: '1.8', marginTop: '1.5rem'}}>
+                                    Utilizamos apenas <strong>produtos premium</strong>: carnes selecionadas, vegetais orgânicos, 
+                                    temperos especiais e um atendimento excepcional para nossos clientes.
+                                </p>
+                            </div>
+                            <div className="about-image">
+                                <img src="https://images.unsplash.com/photo-1574071318508-1cdbab80d174?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Cozinha do restaurante" />
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="menu" className={`section ${visibleSections.menu ? 'visible' : ''}`}>
+                        <h2 className="section-title">Nossos Pratos</h2>
+                        <div className="menu-grid">
+                            {dishes.map(dish => (
+                                <div key={dish.id} className="pizza-card">
+                                    {dish.favorite && <div className="favorite-tag">Favorito</div>}
+                                    <img src={dish.image} alt={dish.name} className="pizza-image" />
+                                    <h3>{dish.name}</h3>
+                                    <p>{dish.ingredients}</p>
+                                    <div className="pizza-price">{dish.price}</div>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+
+                    <section id="location" className={`section ${visibleSections.location ? 'visible' : ''}`}>
+                        <h2 className="section-title">Onde nos encontrar</h2>
+                        <div className="location-container">
+                            <div className="location-info">
+                                <h3>Endereço</h3>
+                                <p>Rua Principal, 123<br />Centro, Cidade - Estado</p>
+                                <h3>Contato</h3>
+                                <p>Telefone: (11) 99999-9999<br />Email: contato@meurestaurante.com</p>
+                                <div className="location-hours">
+                                    <h3>Horário de Funcionamento</h3>
+                                    <div className="hours-item"><span>Segunda - Sexta</span><span>18:00 - 23:00</span></div>
+                                    <div className="hours-item"><span>Sábado</span><span>17:00 - 00:00</span></div>
+                                    <div className="hours-item"><span>Domingo</span><span>17:00 - 22:00</span></div>
+                                </div>
+                            </div>
+                            <div className="map-container">
+                                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3657.0!2d-46.6!3d-23.5!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjPCsDMwJzAwLjAiUyA0NsKwMzYnMDAuMCJX!5e0!3m2!1sen!2sbr!4v1234567890!5m2!1sen!2sbr" width="100%" height="100%" style={{border:0}} allowFullScreen="" loading="lazy"></iframe>
+                            </div>
+                        </div>
+                    </section>
+
+                    <footer className="footer">
+                        <div className="social-links">
+                            <a href="#" aria-label="Facebook"><i className="fab fa-facebook-f"></i></a>
+                            <a href="#" aria-label="Instagram"><i className="fab fa-instagram"></i></a>
+                            <a href="#" aria-label="Twitter"><i className="fab fa-twitter"></i></a>
+                        </div>
+                        <p>&copy; 2024 Meu Restaurante. Todos os direitos reservados.</p>
+                    </footer>
+
+                    <a href="https://wa.me/5511999999999?text=Olá!%20Quero%20fazer%20uma%20reserva%20no%20Meu%20Restaurante!" className="whatsapp-float" target="_blank">
+                        <i className="fab fa-whatsapp"></i>
+                    </a>
+
+                </>
+                    );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
